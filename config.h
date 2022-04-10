@@ -11,8 +11,8 @@ static const int vertpad            = 6;       /* vertical padding of bar */
 static const int sidepad            = 6;       /* horizontal padding of bar */
 #define ICONSIZE 12   /* icon size */
 #define ICONSPACING 5 /* space between icon and title */
-static const char *fonts[]          = { "Ubuntu Mono:size=12" };
-static const char dmenufont[]       = "Ubuntu Mono:size=12";
+static const char *fonts[]          = { "Roboto Mono:size=12","JoyPixels:size=12" };
+static const char dmenufont[]       = "RobotoMono Nerd Font:size=12";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
