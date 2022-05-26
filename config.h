@@ -14,23 +14,45 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 0;        /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const int vertpad            = 0;       /* vertical padding of bar */
 static const int sidepad            = 0;       /* horizontal padding of bar */
+
 #define ICONSIZE 12   /* icon size */
-#define ICONSPACING 5 /* space between icon and title */
+#define ICONSPACING 10 /* space between icon and title */
+
 static const char *fonts[]          = { "RobotoMono Nerd Font:size=12","JoyPixels:size=12" };
 static const char dmenufont[]       = "RobotoMono Nerd Font:size=12";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#222222";
+
+static const char col_black[]       = "#000000";
+static const char col_red[]         = "#ff5555";
+static const char col_green[]       = "#50fa7b";
+static const char col_yellow[]      = "#f1fa8c";
+static const char col_blue[]        = "#bd93f9";
+static const char col_magenta[]     = "#ff79c6";
+static const char col_cyan[]        = "#8be9fd";
+static const char col_white[]       = "#bbbbbb";
+
+static const char col_bg[]          = "#282a36";
+static const char col_fg[]          = "#f8f8f2";
+
 static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	/*                   fg         bg         border   */
+	[SchemeStatus] = { col_white, col_bg,    col_blue  },
+	[SchemeNorTag] = { col_white, col_bg,    col_blue  },
+	[SchemeSelTag] = { col_cyan,  col_bg,    col_blue  },
+	[SchemeNorTit] = { col_white, col_bg,    col_blue  },
+	[SchemeSelTit] = { col_fg,    col_bg,    col_blue  },
+    [SchemeLtsymb] = { col_white, col_bg,    col_blue  },
+	[SchemeNorm]   = { col_fg,    col_bg,    col_blue  },
+	[SchemeSel]    = { col_fg,    col_bg,    col_magenta  },
 };
 
 /* tagging */
-static const char *tags[] = { "", "", "", "", "", "", "", "", "" };
+static const char *tags[]       = { "", "", "", "", "", "", "", "", "" };
+static const char *alttags[]    = { "", "", "", "", "", "", "", "", "" };
+
+static const unsigned int ulinepad	= 3;	/* horizontal padding between the underline and tag */
+static const unsigned int ulinestroke	= 1;	/* thickness / height of the underline */
+static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
+static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -41,7 +63,7 @@ static const Rule rules[] = {
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "firefox",  NULL,       NULL,       1 << 2,       0,           -1 },
     { NULL,       "vlc",      NULL,       1 << 8,       0,           -1 },
-    { NULL,       "spotify",  NULL,       1 << 7,       0,           -1 },
+    { NULL,       NULL,       "Spotify",  1 << 7,       0,           -1 },
     { NULL,       "discord",  NULL,       1 << 6,       0,           -1 },
 };
 
@@ -71,15 +93,17 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, NULL };
-static const char *termcmd[]  = { "st", NULL };
-static const char *screencmd[] = { "screengrab", "-r", NULL };
+static const char *dmenucmd[]   = { "dmenu_run", "-m", dmenumon, NULL };
+static const char *termcmd[]    = { "st", NULL };
+static const char *screencmd[]  = { "screengrab", "-r", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-    { MODKEY,                       XK_y,      spawn,          {.v = screencmd } },
+
+    { 0,                            XK_Print,  spawn,          {.v = screencmd } },
+
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
