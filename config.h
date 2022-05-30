@@ -99,13 +99,29 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[]   = { "dmenu_run", "-m", dmenumon, NULL };
 static const char *termcmd[]    = { "st", NULL };
 static const char *screencmd[]  = { "screengrab", "-r", NULL };
+static const char *keepmcmd[]   = { "keepmenu", "-d", databaseLocation, NULL };
+
+static const char *blup[]       = { "xbacklight", "-inc", "5", NULL };
+static const char *bldown[]     = { "xbacklight", "-dec", "5", NULL };
+
+static const char *volup[]      = { "pactl", "set-sink-volume", "0", "+5%", NULL};
+static const char *voldown[]    = { "pactl", "set-sink-volume", "0", "-5%", NULL};
+static const char *volmute[]    = { "pactl", "set-sink-mute", "0", "toggle", NULL}; 
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 
+    { MODKEY,                       XK_g,      spawn,          {.v = keepmcmd } },
+
     { 0,                            XK_Print,  spawn,          {.v = screencmd } },
+
+    { 0,                            XF86XK_MonBrightnessUp,     spawn,      {.v = blup } },
+    { 0,                            XF86XK_MonBrightnessDown,   spawn,      {.v = bldown } },
+    { 0,                            XF86XK_AudioRaiseVolume,    spawn,      {.v = volup } },
+    { 0,                            XF86XK_AudioLowerVolume,    spawn,      {.v = voldown } },
+    { 0,                            XF86XK_AudioMute,           spawn,      {.v = volmute } },
 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
