@@ -900,14 +900,10 @@ drawbar(Monitor *m)
 	for (i = 0; i < LENGTH(tags); i++) {
 		tagtext = occ & 1 << i ? alttags[i] : tags[i];
 		w = TEXTW(tagtext);
-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSelTag : SchemeNorTag]);
+		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSelTag : (occ & 1 << i ? SchemeWinTag: SchemeNorTag)]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
-		if (ulineall || m->tagset[m->seltags] & 1 << i) /* if there are conflicts, just move these lines directly underneath both 'drw_setscheme' and 'drw_text' :) */
+		if (ulineall || m->tagset[m->seltags] & 1 << i || occ & 1 << i) /* if there are conflicts, just move these lines directly underneath both 'drw_setscheme' and 'drw_text' :) */
 			drw_rect(drw, x + ulinepad, bh - ulinestroke - ulinevoffset, w - ulinepad, ulinestroke, 1, 0);
-        else if (occ & 1 << i)
-            drw_setscheme(drw, scheme[SchemeWinTag]);
-			drw_rect(drw, x + ulinepad, bh - ulinestroke - ulinevoffset, w - ulinepad, ulinestroke, 1, 0);
-        } 
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
