@@ -21,6 +21,8 @@ static const int sidepad            = 0;       /* horizontal padding of bar */
 static const char *fonts[]          = { "RobotoMono Nerd Font:size=12","JoyPixels:size=12" };
 static const char dmenufont[]       = "RobotoMono Nerd Font:size=12";
 
+static const char databaseLocation[]= "/home/harold/mainKeePass.kdbx";
+
 static const char col_black[]       = "#000000";
 static const char col_red[]         = "#ff5555";
 static const char col_green[]       = "#50fa7b";
@@ -38,6 +40,7 @@ static const char *colors[][3]      = {
 	[SchemeStatus] = { col_white, col_bg,    col_blue  },
 	[SchemeNorTag] = { col_white, col_bg,    col_blue  },
 	[SchemeSelTag] = { col_cyan,  col_bg,    col_blue  },
+    [SchemeWinTag] = { col_yellow,col_bg,    col_blue  },
 	[SchemeNorTit] = { col_white, col_bg,    col_blue  },
 	[SchemeSelTit] = { col_fg,    col_bg,    col_blue  },
     [SchemeLtsymb] = { col_white, col_bg,    col_blue  },
