@@ -283,7 +283,7 @@ static int restart = 0;
 static int running = 1;
 static Cur *cursor[CurLast];
 static Clr **scheme;
-static Clr *barclrs;
+static Clr barclrs[256];
 static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
@@ -885,8 +885,25 @@ drawbar(Monitor *m)
 					lp = 0;
 
 					char *ep = stext + rd + 1;
+					int ignore = 0;
+					int bgfg = 0;
 					while (*ep != 'm') {
 						unsigned v = strtoul(ep + 1, &ep, 10);
+						if (ignore)
+							continue;
+						if (bgfg) {
+							if (bgfg < 4 && v == 5) {
+								bgfg <<= 1;
+								continue;
+							}
+							if (bgfg == 4)
+								scm[0] = barclrs[fg = v];
+							else if (bgfg == 6)
+								scm[1] = barclrs[bg = v];
+							ignore = 1;
+
+							continue;
+						}
 						if (v == 0) {
 							memcpy(scm, scheme[SchemeNorm], sizeof(scm));
 							fg = 7;
@@ -931,9 +948,13 @@ drawbar(Monitor *m)
 						} else if (v >= 30 && v <= 37) {
 							fg = v % 10 | (fg & 8);
 							scm[0] = barclrs[fg];
+						} else if (v == 38) {
+							bgfg = 2;
 						} else if (v >= 40 && v <= 47) {
 							bg = v % 10;
 							scm[1] = barclrs[bg];
+						} else if (v == 48) {
+							bgfg = 3;
 						} else if (v == 53) {
 							fmt |= OVERLINE;
 						} else if (v == 55) {
@@ -1849,12 +1870,19 @@ setmfact(const Arg *arg)
 	arrange(selmon);
 }
 
+unsigned char
+sixd_to_8bit(int x)
+{
+	return x == 0 ? 0 : 0x37 + 0x28 * x;
+}
+
 void
 setup(void)
 {
 	int i;
 	XSetWindowAttributes wa;
 	Atom utf8string;
+	char cbuf[8];
 
 	/* clean up any zombies immediately */
 	sigchld(0);
@@ -1904,9 +1932,42 @@ setup(void)
 	for (i = 0; i < LENGTH(colors); i++)
 		scheme[i] = drw_scm_create(drw, colors[i], 3);
 
-	barclrs = ecalloc(LENGTH(barcolors), sizeof(Clr));
-	for (i = 0; i < LENGTH(barcolors); i++)
+	for (i = 0; i < LENGTH(barcolors) && i < LENGTH(barclrs); i++)
 		drw_clr_create(drw, &barclrs[i], barcolors[i]);
+	if (i == 0)
+		drw_clr_create(drw, &barclrs[i++], "#000000");
+	for (; i < 7; i++) {
+		snprintf(cbuf, sizeof(cbuf), "#%02x%02x%02x",
+			 !!(i & 1) * 0x7f,
+			 !!(i & 2) * 0x7f,
+			 !!(i & 4) * 0x7f);
+		drw_clr_create(drw, &barclrs[i], cbuf);
+	}
+	if (i == 7)
+		drw_clr_create(drw, &barclrs[i++], "#000000");
+	if (i == 8)
+		drw_clr_create(drw, &barclrs[i++], "#333333");
+	for (; i < 16; i++) {
+		snprintf(cbuf, sizeof(cbuf), "#%02x%02x%02x",
+			 !!(i & 1) * 0xff,
+			 !!(i & 2) * 0xff,
+			 !!(i & 4) * 0xff);
+		drw_clr_create(drw, &barclrs[i], cbuf);
+	}
+	for (; i < 6 * 6 * 6 + 16; i++) {
+		snprintf(cbuf, sizeof(cbuf), "#%02x%02x%02x",
+			 sixd_to_8bit(((i - 16) / 36) % 6),
+			 sixd_to_8bit(((i - 16) / 6) % 6),
+			 sixd_to_8bit(((i - 16)) % 6));
+		drw_clr_create(drw, &barclrs[i], cbuf);
+	}
+	for (; i < 256; i++) {
+		snprintf(cbuf, sizeof(cbuf), "#%02x%02x%02x",
+			 0x08 + (i - 6 * 6 * 6 - 16) * 0x0a,
+			 0x08 + (i - 6 * 6 * 6 - 16) * 0x0a,
+			 0x08 + (i - 6 * 6 * 6 - 16) * 0x0a);
+		drw_clr_create(drw, &barclrs[i], cbuf);
+	}
 
 	/* init bars */
 	updatebars();
