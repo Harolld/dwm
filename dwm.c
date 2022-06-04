@@ -905,7 +905,7 @@ drawbar(Monitor *m)
 							continue;
 						}
 						if (v == 0) {
-							memcpy(scm, scheme[SchemeNorm], sizeof(scm));
+							memcpy(scm, scheme[SchemeStatus], sizeof(scm));
 							fg = 7;
 							bg = 0;
 							fmt = 0;
