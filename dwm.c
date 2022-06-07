@@ -807,7 +807,7 @@ drawbar(Monitor *m)
 		return;
 
 	/* draw status first so it can be overdrawn by tags later */
-	if (m == selmon) { /* status is only drawn on selected monitor */
+	if (m == selmon || statusallmon) { /* status is only drawn on selected monitor */
 		char buffer[sizeof(stext)];
 		Clr scm[3];
 		int wr, rd;

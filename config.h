@@ -10,6 +10,8 @@ static const int user_bh            = 0;        /* 0 means that dwm will calcula
 static const int vertpad            = 0;       /* vertical padding of bar */
 static const int sidepad            = 0;       /* horizontal padding of bar */
 
+static const int statusallmon       = 1;        /* 1 to display status on all monitor, 0 for just selected monitor */
+
 #define ICONSIZE 12   /* icon size */
 #define ICONSPACING 10 /* space between icon and title */
 
